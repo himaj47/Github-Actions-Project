@@ -1,0 +1,29 @@
+name: Test Flask Application
+
+on:
+  push:
+    branches: [main]  # Triggered on a push to the main branch
+  pull_request:
+    branches: [main]  # Triggered for pull requests to the main branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Flask App and Test
+        run: |
+          python -m flask --app app.py run &  # Start Flask app in background
+          sleep 5  # Wait for Flask to start
+          curl -f http://localhost:5000 || exit 1  # Test if Flask is running
